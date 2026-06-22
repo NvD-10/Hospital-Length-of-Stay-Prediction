@@ -1,30 +1,36 @@
-# 🏥 Hospital Length of Stay Prediction
+# 🏥 Hospital Length of Stay Prediction Using Machine Learning
 
-A Machine Learning project that predicts the **Length of Stay (LoS)** of hospitalized patients using demographic, clinical, and laboratory data. Accurate prediction of patient stay duration helps hospitals optimize bed allocation, improve patient flow, reduce operational costs, and enhance healthcare service delivery.
+A machine learning project that predicts the **Length of Stay (LoS)** of hospitalized patients using demographic information, comorbidity indicators, laboratory measurements, and vital signs.
+
+Accurate prediction of hospital stay duration helps healthcare institutions optimize resource allocation, improve patient flow, reduce operational costs, and enhance overall healthcare delivery.
 
 ---
 
 ## 📌 Project Overview
 
-Hospital Length of Stay (LoS) is one of the most important operational metrics in healthcare management. Predicting how long a patient will remain hospitalized enables hospitals to better manage resources and improve care quality.
+Hospital Length of Stay (LoS) is one of the most important operational metrics in healthcare management. Predicting how long a patient is likely to remain hospitalized enables hospitals to improve bed utilization, staff planning, and patient care efficiency.
 
-This project applies and compares two machine learning regression models:
+This project develops and compares multiple machine learning regression models to predict patient length of stay using clinical and demographic information.
 
-- Linear Regression (Baseline Model)
-- Random Forest Regression (Ensemble Model)
+### Models Evaluated
 
-The dataset contains **100,000 patient records** and **27 clinical features**, including demographic information, medical history, comorbidity indicators, laboratory measurements, and vital signs.
+* Linear Regression
+* Ridge Regression
+* Decision Tree Regression
+* Random Forest Regression
+* XGBoost Regression
 
 ---
 
 ## 🎯 Objectives
 
-- Perform Exploratory Data Analysis (EDA)
-- Assess and improve data quality
-- Preprocess and engineer predictive features
-- Train multiple regression models
-- Evaluate model performance using standard metrics
-- Identify the most influential factors affecting hospital stay duration
+* Perform Exploratory Data Analysis (EDA)
+* Assess data quality and consistency
+* Clean and preprocess clinical data
+* Engineer meaningful predictive features
+* Train multiple regression models
+* Compare model performance
+* Identify factors influencing hospital stay duration
 
 ---
 
@@ -32,105 +38,156 @@ The dataset contains **100,000 patient records** and **27 clinical features**, i
 
 **Source:** Microsoft R Server Hospital Length of Stay Dataset
 
+Source Documentation:
+
+https://microsoft.github.io/r-server-hospital-length-of-stay/input_data.html
+
 ### Dataset Statistics
 
-| Property | Value |
-|-----------|--------|
-| Records | 100,000 |
-| Features | 28 |
-| Target Variable | Length of Stay (days) |
-| Missing Values | None |
-| Duplicate Records | None |
-| Data Type | Mixed (Numerical, Binary, Categorical) |
-
-### Main Feature Categories
-
-#### Demographic & Clinical History
-- Readmission Count (`rcount`)
-- Gender
-- Secondary Diagnosis Count
-
-#### Comorbidity Indicators
-- Asthma
-- Pneumonia
-- Depression
-- Malnutrition
-- Renal Disease
-- Substance Dependence
-- Hemoglobin Disorders
-- Psychological Disorders
-- And others
-
-#### Clinical Measurements
-- Hematocrit
-- Glucose
-- Sodium
-- Creatinine
-- Blood Urea Nitrogen
-- BMI
-- Pulse Rate
-- Respiration Rate
-- Neutrophil Count
-
-#### Target Variable
-- `lengthofstay`
-  - Minimum: 1 day
-  - Maximum: 17 days
-  - Mean: 4 days
+| Property          | Value                              |
+| ----------------- | ---------------------------------- |
+| Records           | 100,000                            |
+| Features          | 28                                 |
+| Target Variable   | Length of Stay (Days)              |
+| Missing Values    | None                               |
+| Duplicate Records | None                               |
+| Data Type         | Numerical, Binary, and Categorical |
 
 ---
 
-## 🔧 Data Preprocessing
+## 🧾 Feature Categories
 
-### 1. Data Cleaning
-- Removed duplicate records
-- Corrected invalid glucose value
-- Handled categorical inconsistencies
+### Demographic & Admission Information
 
-### 2. Feature Removal
+* Readmission Count (rcount)
+* Gender
+* Secondary Diagnosis Count
 
-The following columns were excluded to prevent data leakage:
+### Comorbidity Indicators
 
-- `eid`
-- `vdate`
-- `discharged`
-- `facid`
+* Asthma
+* Pneumonia
+* Depression
+* Malnutrition
+* Renal Disease
+* Substance Dependence
+* Hemoglobin Disorders
+* Psychological Disorders
+* Fibrosis and Other Chronic Conditions
 
-### 3. Encoding
+### Clinical Measurements
 
-- Gender:
-  - Female → 0
-  - Male → 1
+* Hematocrit
+* Glucose
+* Sodium
+* Creatinine
+* Blood Urea Nitrogen
+* BMI
+* Pulse Rate
+* Respiration Rate
+* Neutrophil Count
 
-- Readmission count (`5+`) converted to integer value `5`
+### Target Variable
 
-### 4. Feature Engineering
+**lengthofstay**
 
-Created a new feature:
+* Minimum: 1 Day
+* Maximum: 17 Days
+* Mean: Approximately 4 Days
+
+---
+
+## 🔍 Exploratory Data Analysis
+
+Several exploratory analyses were performed:
+
+* Dataset structure inspection
+* Missing value analysis
+* Descriptive statistics
+* Target variable distribution
+* Correlation analysis
+* Comorbidity frequency analysis
+* Feature relationship exploration
+
+### Key Findings
+
+* No missing values were found.
+* No duplicate patient records existed.
+* One invalid negative glucose value was detected.
+* Length of stay was right-skewed with most patients staying fewer than 6 days.
+* Readmission count and comorbidity burden showed strong relationships with hospital stay duration.
+
+---
+
+## 🔧 Data Cleaning
+
+### Data Quality Improvements
+
+* Removed duplicate records
+* Corrected invalid glucose measurement
+* Standardized categorical values
+
+### Removed Columns
+
+The following columns were removed because they were identifiers or could introduce data leakage:
+
+* eid
+* vdate
+* discharged
+* facid
+
+---
+
+## ⚙️ Feature Engineering
+
+### Encoding
+
+#### Gender
+
+* Female → 0
+* Male → 1
+
+#### Readmission Count
+
+* "5+" converted to integer value 5
+
+### New Feature Created
+
+#### total_issues
+
+Represents the total number of chronic conditions recorded for a patient.
 
 ```text
-total_issues
+total_issues =
+sum of all comorbidity indicators
 ```
 
-This feature represents the total number of comorbidities present in a patient and serves as an overall health burden indicator.
+This feature serves as an overall health burden indicator.
 
-### 5. Train-Test Split
+---
+
+## 🧪 Data Preparation
+
+### Train-Test Split
 
 ```text
-Training Set: 80%
-Testing Set: 20%
-Random State: 42
+Training Set : 80%
+Testing Set  : 20%
+Random State : 42
 ```
 
-### 6. Feature Scaling
+### Feature Scaling
 
 Applied StandardScaler for:
 
-- Linear Regression
+* Linear Regression
+* Ridge Regression
 
-Not applied for:
+Not required for:
 
-- Random Forest Regression
+* Decision Tree
+* Random Forest
+* XGBoost
 
 ---
 
@@ -138,17 +195,36 @@ Not applied for:
 
 ### Linear Regression
 
-A baseline model that assumes a linear relationship between input features and hospital stay duration.
+Baseline regression model assuming a linear relationship between features and length of stay.
+
+### Ridge Regression
+
+Regularized linear regression used to reduce overfitting.
+
+### Decision Tree Regression
+
+Captures nonlinear relationships through recursive partitioning.
 
 ### Random Forest Regression
 
-An ensemble learning algorithm that combines multiple decision trees to capture complex nonlinear relationships and feature interactions.
-
-Configuration:
+Ensemble learning model that combines multiple decision trees.
 
 ```python
 RandomForestRegressor(
     n_estimators=100,
+    random_state=42
+)
+```
+
+### XGBoost Regression
+
+Gradient boosting model capable of capturing complex feature interactions and nonlinear relationships.
+
+```python
+XGBRegressor(
+    n_estimators=200,
+    max_depth=6,
+    learning_rate=0.1,
     random_state=42
 )
 ```
@@ -161,62 +237,76 @@ RandomForestRegressor(
 
 Measures how much variance in the target variable is explained by the model.
 
-### RMSE (Root Mean Squared Error)
+### RMSE
 
-Measures average prediction error in days.
+Root Mean Squared Error measures the average prediction error in days.
+
+Lower RMSE indicates better prediction accuracy.
 
 ---
 
-## 🏆 Results
+## 🏆 Model Performance
 
-| Model | R² Score | RMSE |
-|---------|---------|---------|
-| Linear Regression | 0.7522 | 1.1661 |
-| Random Forest Regression | 0.9410 | 0.5687 |
+| Model             | R² Score  | RMSE      |
+| ----------------- | --------- | --------- |
+| Linear Regression | ~0.75     | ~1.17     |
+| Ridge Regression  | ~0.75     | ~1.17     |
+| Decision Tree     | Evaluated | Evaluated |
+| Random Forest     | ~0.94     | ~0.57     |
+| XGBoost           | ~0.97     | ~0.40     |
 
-### Key Findings
+### Best Model
 
-- Random Forest significantly outperformed Linear Regression.
-- The model explained **94.1%** of the variation in patient length of stay.
-- Average prediction error was reduced by approximately **51%** compared to the baseline model.
+🏆 **XGBoost Regression**
+
+Performance:
+
+```text
+R² Score ≈ 0.971
+RMSE ≈ 0.397
+```
+
+The model explains approximately 97% of the variation in patient length of stay while maintaining very low prediction error.
 
 ---
 
 ## 🔍 Feature Importance
 
-| Rank | Feature | Importance |
-|--------|----------|-----------|
-| 1 | Readmission Count (`rcount`) | 0.5643 |
-| 2 | Total Issues (`total_issues`) | 0.2132 |
-| 3 | Hematocrit | 0.0387 |
-| 4 | BMI | 0.0255 |
-| 5 | Glucose | 0.0255 |
-| 6 | Creatinine | 0.0253 |
-| 7 | Sodium | 0.0251 |
-| 8 | Respiration | 0.0247 |
-| 9 | Pulse | 0.0238 |
-| 10 | Neutrophils | 0.0162 |
+The most influential predictors included:
+
+* Readmission Count (rcount)
+* Total Issues (total_issues)
+* Hematocrit
+* BMI
+* Glucose
+* Creatinine
+* Sodium
+* Respiration Rate
+* Pulse Rate
+* Neutrophil Count
 
 ### Insight
 
 Patients with:
-- Frequent prior admissions
-- Multiple comorbidities
-- Abnormal laboratory measurements
 
-tend to have longer hospital stays.
+* Frequent prior admissions
+* Multiple comorbidities
+* Abnormal laboratory measurements
+
+tend to experience longer hospital stays.
 
 ---
 
 ## 🛠️ Technologies Used
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-learn
-- Jupyter Notebook
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Scikit-learn
+* XGBoost
+* Jupyter Notebook
 
 ---
 
@@ -225,7 +315,7 @@ tend to have longer hospital stays.
 Clone the repository:
 
 ```bash
-git clone https://github.com/NvD-10/Hospital-Length-of-Stay-Prediction.git
+git clone https://github.com/your-username/Hospital-Length-of-Stay-Prediction.git
 
 cd Hospital-Length-of-Stay-Prediction
 ```
@@ -233,24 +323,12 @@ cd Hospital-Length-of-Stay-Prediction
 Install dependencies:
 
 ```bash
-pip install // needed packages
+pip install pandas numpy matplotlib seaborn scikit-learn xgboost
 ```
 
 ---
 
 ## ▶️ Running the Project
-
-Train the model:
-
-```bash
-python train.py
-```
-
-Run predictions:
-
-```bash
-python predict.py
-```
 
 Launch Jupyter Notebook:
 
@@ -258,29 +336,37 @@ Launch Jupyter Notebook:
 jupyter notebook
 ```
 
+Open:
+
+```text
+Hospital_Length_of_Stay_Prediction.ipynb
+```
+
+Run all cells sequentially.
+
 ---
 
 ## 📌 Future Improvements
 
-- Hyperparameter tuning using GridSearchCV
-- K-Fold Cross Validation
-- XGBoost comparison
-- LightGBM comparison
-- Deep Learning approaches
-- Real-time deployment using Flask or FastAPI
-- Integration with Hospital Information Systems
-- Interactive dashboard for hospital administrators
+* Hyperparameter tuning with GridSearchCV
+* K-Fold Cross Validation
+* LightGBM comparison
+* CatBoost comparison
+* Deep Learning approaches
+* Real-time deployment using Flask or FastAPI
+* Integration with Hospital Information Systems
+* Interactive analytics dashboard
 
 ---
 
 ## 👨‍💻 Authors
 
-- Kaleb Dagnachew (ETS0747/15)
-- Kalkidan Agonafir (ETS0749/15)
-- Kernemi Kidane (ETS0760/15)
-- Lidiya Abebe (ETS0832/15)
-- Meti Seboka (ETS0918/15)
-- Nehemiah Mitiku (ETS1082/15)
+* Kaleb Dagnachew (ETS0747/15)
+* Kalkidan Agonafir (ETS0749/15)
+* Kernemi Kidane (ETS0760/15)
+* Lidiya Abebe (ETS0832/15)
+* Meti Seboka (ETS0918/15)
+* Nehemiah Mitiku (ETS1082/15)
 
 ---
 
