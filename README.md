@@ -315,7 +315,7 @@ tend to experience longer hospital stays.
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Hospital-Length-of-Stay-Prediction.git
+git clone https://github.com/NvD-10/Hospital-Length-of-Stay-Prediction.git
 
 cd Hospital-Length-of-Stay-Prediction
 ```
