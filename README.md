@@ -276,6 +276,7 @@ jupyter notebook
 ## 👨‍💻 Authors
 
 - Kaleb Dagnachew (ETS0747/15)
+- Kalkidan Agonafir (ETS0749/15)
 - Kernemi Kidane (ETS0760/15)
 - Lidiya Abebe (ETS0832/15)
 - Meti Seboka (ETS0918/15)
